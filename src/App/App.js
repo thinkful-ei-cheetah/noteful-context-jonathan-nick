@@ -10,6 +10,7 @@ import AddNote from '../AddNote/AddNote'
 import dummyStore from '../dummy-store'
 import { getNotesForFolder, findNote, findFolder } from '../notes-helpers'
 import './App.css'
+import NoteContext from '../NoteContext/NoteContext';
 
 class App extends Component {
   state = {
@@ -18,9 +19,27 @@ class App extends Component {
   };
 
   componentDidMount() {
-    // fake date loading from API call
-    setTimeout(() => this.setState(dummyStore), 600)
+    fetch('http://localhost:9090/folders')
+      .then( res => res.json() )
+      .then( folders => {
+        this.setState({
+          folders
+        })
+      })
+    
+    fetch('http://localhost:9090/notes')
+      .then( res => res.json() )
+      .then( notes => {
+        this.setState({
+          notes
+        })
+      })
   }
+
+  deleteNote = () => {
+    // filter on noteID
+    // setState
+  };
 
   renderNavRoutes() {
     const { notes, folders } = this.state
@@ -31,13 +50,14 @@ class App extends Component {
             exact
             key={path}
             path={path}
-            render={routeProps =>
-              <NoteListNav
-                folders={folders}
-                notes={notes}
-                {...routeProps}
-              />
-            }
+            // render={routeProps =>
+            //   <NoteListNav
+            //     folders={folders}
+            //     notes={notes}
+            //     {...routeProps}
+            //   />
+            // }
+            component={NoteListNav}
           />
         )}
         <Route
@@ -53,6 +73,7 @@ class App extends Component {
               />
             )
           }}
+          // component={NotePageNav}
         />
         <Route
           path='/add-folder'
@@ -120,22 +141,29 @@ class App extends Component {
   }
 
   render() {
+    const contextValue = {
+      notes: this.state.notes,
+      folders: this.state.folders,
+      deleteNote: this.deleteNote
+    }
     return (
-      <div className='App'>
-        <nav className='App__nav'>
-          {this.renderNavRoutes()}
-        </nav>
-        <header className='App__header'>
-          <h1>
-            <Link to='/'>Noteful</Link>
-            {' '}
-            <FontAwesomeIcon icon='check-double' />
-          </h1>
-        </header>
-        <main className='App__main'>
-          {this.renderMainRoutes()}
-        </main>
-      </div>
+      <NoteContext.Provider value={ contextValue }>
+        <div className='App'>
+          <nav className='App__nav'>
+            {this.renderNavRoutes()}
+          </nav>
+          <header className='App__header'>
+            <h1>
+              <Link to='/'>Noteful</Link>
+              {' '}
+              <FontAwesomeIcon icon='check-double' />
+            </h1>
+          </header>
+          <main className='App__main'>
+            {this.renderMainRoutes()}
+          </main>
+        </div>
+      </NoteContext.Provider>
     )
   }
 }

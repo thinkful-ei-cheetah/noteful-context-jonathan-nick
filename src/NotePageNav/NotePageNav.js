@@ -1,7 +1,8 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import CircleButton from '../CircleButton/CircleButton'
 import './NotePageNav.css'
+import NoteContext from '../NoteContext/NoteContext';
 
 export default function NotePageNav(props) {
   return (
