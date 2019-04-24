@@ -36,9 +36,10 @@ class App extends Component {
       })
   }
 
-  deleteNote = () => {
-    // filter on noteID
-    // setState
+  deleteNote = (noteId) => { 
+      this.setState({
+          notes: this.state.notes.filter((note) => note.id !== noteId)
+      })
   };
 
   renderNavRoutes() {
