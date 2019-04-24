@@ -14,13 +14,23 @@ export default function Note(props) {
       headers: {
         'content-type': 'application/json'
       },
-    }).then((res) => {
-        if (res.ok) {
-          deleteNote(props.id)
-          props.history.push('/')
-        } else {
-          console.log('error when attempting to delete note')
+    })
+    .then((res) => {
+        // if (res.ok) {
+        //   props.history.push('/')
+        //   deleteNote(props.id)
+        // } else {
+        //   console.log('error when attempting to delete note')
+        // }
+        if(!res.ok) {
+          throw new Error('ERROR while deleting Note');
         } 
+
+        return res.json();
+    })
+    .then(() => {
+      props.history.push('/');
+      deleteNote(props.id);
     })
   }
 
